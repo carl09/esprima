@@ -1,11 +1,13 @@
-declare class Error {
-    public name: string;
-    public message: string;
-    public index: number;
-    public lineNumber: number;
-    public column: number;
-    public description: string;
-    constructor(message: string);
+export class CustomError extends Error {
+    name: string;
+    message: string;
+    index: number;
+    lineNumber: number;
+    column: number;
+    description: string;
+    constructor(message: string) {
+        super(message);
+    }
 }
 
 export class ErrorHandler {
@@ -29,8 +31,8 @@ export class ErrorHandler {
         }
     };
 
-    constructError(msg: string, column: number): Error {
-        let error = new Error(msg);
+    constructError(msg: string, column: number): CustomError {
+        let error = new CustomError(msg);
         try {
             throw error;
         } catch (base) {
@@ -44,7 +46,7 @@ export class ErrorHandler {
         }
     };
 
-    createError(index: number, line: number, col: number, description: string): Error {
+    createError(index: number, line: number, col: number, description: string): CustomError {
         const msg = 'Line ' + line + ': ' + description;
         const error = this.constructError(msg, col);
         error.index = index;

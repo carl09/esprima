@@ -1,0 +1,196 @@
+import { ErrorHandler } from './error-handler';
+import { Token } from './token';
+import { Scanner } from './scanner';
+import * as Node from './nodes';
+export interface Config {
+    range: boolean;
+    loc: boolean;
+    source: string;
+    tokens: boolean;
+    comment: boolean;
+    tolerant: boolean;
+}
+export interface Context {
+    allowIn: boolean;
+    allowYield: boolean;
+    firstCoverInitializedNameError: any;
+    isAssignmentTarget: boolean;
+    isBindingElement: boolean;
+    inFunctionBody: boolean;
+    inIteration: boolean;
+    inSwitch: boolean;
+    labelSet: any;
+    strict: boolean;
+}
+export interface Marker {
+    index: number;
+    lineNumber: number;
+    lineStart: number;
+}
+export interface MetaNode {
+    index: number;
+    line: number;
+    column: number;
+}
+export interface ArrowParameterPlaceHolderNode {
+    type: string;
+    params: Node.Expression[];
+}
+export interface DeclarationOptions {
+    inFor: boolean;
+}
+export declare class Parser {
+    config: Config;
+    delegate: any;
+    errorHandler: ErrorHandler;
+    scanner: Scanner;
+    operatorPrecedence: any;
+    sourceType: string;
+    lookahead: any;
+    hasLineTerminator: boolean;
+    context: Context;
+    tokens: any[];
+    startMarker: Marker;
+    lastMarker: Marker;
+    constructor(code: string, options: any, delegate: any);
+    throwError(messageFormat: string, ...values: any[]): void;
+    tolerateError(messageFormat: any, ...values: any[]): void;
+    unexpectedTokenError(token?: any, message?: string): Error;
+    throwUnexpectedToken(token?: any, message?: any): void;
+    tolerateUnexpectedToken(token?: any, message?: any): void;
+    collectComments(): void;
+    getTokenRaw(token: any): string;
+    convertToken(token: any): any;
+    nextToken(): any;
+    nextRegexToken(): {
+        type: Token;
+        value: RegExp;
+        literal: string;
+        regex: {
+            pattern: string;
+            flags: string;
+        };
+        lineNumber: number;
+        lineStart: number;
+        start: number;
+        end: number;
+    };
+    createNode(): MetaNode;
+    startNode(token: any): MetaNode;
+    finalize(meta: MetaNode, node: any): any;
+    expect(value: any): void;
+    expectCommaSeparator(): void;
+    expectKeyword(keyword: any): void;
+    match(value: any): boolean;
+    matchKeyword(keyword: any): boolean;
+    matchContextualKeyword(keyword: any): boolean;
+    matchAssign(): boolean;
+    isolateCoverGrammar(parseFunction: any): any;
+    inheritCoverGrammar(parseFunction: any): any;
+    consumeSemicolon(): void;
+    parsePrimaryExpression(): Node.Expression;
+    parseSpreadElement(): Node.SpreadElement;
+    parseArrayInitializer(): Node.ArrayExpression;
+    parsePropertyMethod(params: any): Node.BlockStatement;
+    parsePropertyMethodFunction(): Node.FunctionExpression;
+    parseObjectPropertyKey(): Node.PropertyKey;
+    isPropertyKey(key: any, value: any): boolean;
+    parseObjectProperty(hasProto: any): Node.Property;
+    parseObjectInitializer(): Node.ObjectExpression;
+    parseTemplateHead(): Node.TemplateElement;
+    parseTemplateElement(): Node.TemplateElement;
+    parseTemplateLiteral(): Node.TemplateLiteral;
+    reinterpretExpressionAsPattern(expr: any): void;
+    parseGroupExpression(): ArrowParameterPlaceHolderNode | Node.Expression;
+    parseArguments(): Node.ArgumentListElement[];
+    isIdentifierName(token: any): boolean;
+    parseIdentifierName(): Node.Identifier;
+    parseNewExpression(): Node.MetaProperty | Node.NewExpression;
+    parseLeftHandSideExpressionAllowCall(): Node.Expression;
+    parseSuper(): Node.Super;
+    parseLeftHandSideExpression(): Node.Expression;
+    parseUpdateExpression(): Node.Expression;
+    parseUnaryExpression(): Node.Expression;
+    parseExponentiationExpression(): Node.Expression;
+    binaryPrecedence(token: any): number;
+    parseBinaryExpression(): Node.Expression;
+    parseConditionalExpression(): Node.Expression;
+    checkPatternParam(options: any, param: any): void;
+    reinterpretAsCoverFormalsList(expr: any): {
+        params: any[];
+        stricted: any;
+        firstRestricted: any;
+        message: any;
+    };
+    parseAssignmentExpression(): Node.Expression;
+    parseExpression(): Node.Expression | Node.SequenceExpression;
+    parseStatementListItem(): Node.StatementListItem;
+    parseBlock(): Node.BlockStatement;
+    parseLexicalBinding(kind: string, options: any): Node.VariableDeclarator;
+    parseBindingList(kind: string, options: any): Node.VariableDeclarator[];
+    isLexicalDeclaration(): boolean;
+    parseLexicalDeclaration(options: any): Node.VariableDeclaration;
+    parseBindingRestElement(params: any, kind: string): Node.RestElement;
+    parseArrayPattern(params: any, kind: string): Node.ArrayPattern;
+    parsePropertyPattern(params: any, kind: string): Node.Property;
+    parseObjectPattern(params: any, kind: string): Node.ObjectPattern;
+    parsePattern(params: any, kind?: string): Node.BindingIdentifier | Node.BindingPattern;
+    parsePatternWithDefault(params: any, kind?: string): Node.AssignmentPattern | Node.BindingIdentifier | Node.BindingPattern;
+    parseVariableIdentifier(kind?: string): Node.Identifier;
+    parseVariableDeclaration(options: DeclarationOptions): Node.VariableDeclarator;
+    parseVariableDeclarationList(options: any): Node.VariableDeclarator[];
+    parseVariableStatement(): Node.VariableDeclaration;
+    parseEmptyStatement(): Node.EmptyStatement;
+    parseExpressionStatement(): Node.ExpressionStatement;
+    parseIfStatement(): Node.IfStatement;
+    parseDoWhileStatement(): Node.DoWhileStatement;
+    parseWhileStatement(): Node.WhileStatement;
+    parseForStatement(): Node.ForStatement | Node.ForInStatement | Node.ForOfStatement;
+    parseContinueStatement(): Node.ContinueStatement;
+    parseBreakStatement(): Node.BreakStatement;
+    parseReturnStatement(): Node.ReturnStatement;
+    parseWithStatement(): Node.WithStatement;
+    parseSwitchCase(): Node.SwitchCase;
+    parseSwitchStatement(): Node.SwitchStatement;
+    parseLabelledStatement(): Node.LabeledStatement | Node.ExpressionStatement;
+    parseThrowStatement(): Node.ThrowStatement;
+    parseCatchClause(): Node.CatchClause;
+    parseFinallyClause(): Node.BlockStatement;
+    parseTryStatement(): Node.TryStatement;
+    parseDebuggerStatement(): Node.DebuggerStatement;
+    parseStatement(): Node.Statement;
+    parseFunctionSourceElements(): Node.BlockStatement;
+    validateParam(options: any, param: any, name: any): void;
+    parseRestElement(params: any): Node.RestElement;
+    parseFormalParameter(options: any): boolean;
+    parseFormalParameters(firstRestricted?: any): {
+        params: any;
+        stricted: any;
+        firstRestricted: any;
+        message: any;
+    };
+    parseFunctionDeclaration(identifierIsOptional?: boolean): Node.FunctionDeclaration;
+    parseFunctionExpression(): Node.FunctionExpression;
+    parseDirective(): Node.Directive | Node.ExpressionStatement;
+    parseDirectivePrologues(): Node.Statement[];
+    qualifiedPropertyName(token: any): boolean;
+    parseGetterMethod(): Node.FunctionExpression;
+    parseSetterMethod(): Node.FunctionExpression;
+    parseGeneratorMethod(): Node.FunctionExpression;
+    isStartOfExpression(): boolean;
+    parseYieldExpression(): Node.YieldExpression;
+    parseClassElement(hasConstructor: any): Node.Property;
+    parseClassElementList(): Node.Property[];
+    parseClassBody(): Node.ClassBody;
+    parseClassDeclaration(identifierIsOptional?: boolean): Node.ClassDeclaration;
+    parseClassExpression(): Node.ClassExpression;
+    parseProgram(): Node.Program;
+    parseModuleSpecifier(): Node.Literal;
+    parseImportSpecifier(): Node.ImportSpecifier;
+    parseNamedImports(): Node.ImportSpecifier[];
+    parseImportDefaultSpecifier(): Node.ImportDefaultSpecifier;
+    parseImportNamespaceSpecifier(): Node.ImportNamespaceSpecifier;
+    parseImportDeclaration(): Node.ImportDeclaration;
+    parseExportSpecifier(): Node.ExportSpecifier;
+    parseExportDeclaration(): Node.ExportDeclaration;
+}
